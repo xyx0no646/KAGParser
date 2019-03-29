@@ -5,13 +5,8 @@
 #endif
 #include "tp_stub.h"
 
-#ifdef _WIN32
-#define DLL_EXPORT __declspec(dllexport)
-#define STDCALL __stdcall
-#else
-typedef tjs_error HRESULT;
-#define DLL_EXPORT
-#endif
+#define EXPORT(hr) extern "C" __declspec(dllexport) hr __stdcall
+
 #include "KAGParser.h"
 
 //---------------------------------------------------------------------------
@@ -22,7 +17,7 @@ int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved
 #endif
 //---------------------------------------------------------------------------
 static tjs_int GlobalRefCountAtInit = 0;
-extern "C" DLL_EXPORT HRESULT STDCALL V2Link(iTVPFunctionExporter *exporter)
+EXPORT(HRESULT) V2Link(iTVPFunctionExporter *exporter)
 {
 	// スタブの初期化(必ず記述する)
 	TVPInitImportStub(exporter);
@@ -62,7 +57,7 @@ extern "C" DLL_EXPORT HRESULT STDCALL V2Link(iTVPFunctionExporter *exporter)
 	return TJS_S_OK;
 }
 //---------------------------------------------------------------------------
-extern "C" DLL_EXPORT HRESULT STDCALL V2Unlink()
+EXPORT(HRESULT) V2Unlink()
 {
 	// 吉里吉里側から、プラグインを解放しようとするときに呼ばれる関数。
 
