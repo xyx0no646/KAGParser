@@ -9,8 +9,24 @@
 // KAG Parser Utility Class
 //---------------------------------------------------------------------------
 
+#include "ncbind/ncbind.hpp"
+
+#ifndef USING_TP_STUB
+#include "tjsCommHead.h"
+#endif
 
 #include "KAGParser.h"
+#ifndef USING_TP_STUB
+#include "StorageIntf.h"
+#include "tjsDictionary.h"
+#include "MsgIntf.h"
+#include "DebugIntf.h"
+#include "ScriptMgnIntf.h"
+#include "tjsHashSearch.h"
+#include "TextStream.h"
+#include "tjsGlobalStringMap.h"
+#include "EventIntf.h"
+#endif
 
 
 //---------------------------------------------------------------------------
@@ -29,7 +45,9 @@
 
 const tjs_char* TVPKAGNoLine = TJS_W("読み込もうとしたシナリオファイル %1 は空です");
 const tjs_char* TVPKAGCannotOmmitFirstLabelName = TJS_W("シナリオファイルの最初のラベル名は省略できません");
+#if 0
 const tjs_char* TVPInternalError = TJS_W("内部エラーが発生しました: at %1 line %2");
+#endif
 const tjs_char* TVPKAGMalformedSaveData = TJS_W("栞データが異常です。データが破損している可能性があります");
 const tjs_char* TVPKAGLabelNotFound = TJS_W("シナリオファイル %1 内にラベル %2 が見つかりません");
 const tjs_char* TVPLabelOrScriptInMacro = TJS_W("ラベルや iscript はマクロ中に記述できません");
@@ -40,11 +58,13 @@ const tjs_char* TVPKAGReturnLostSync = TJS_W("シナリオファイルに変更�
 const tjs_char* TVPKAGSpecifyKAGParser = TJS_W("KAGParser クラスのオブジェクトを指定してください");
 const tjs_char* TVPUnknownMacroName = TJS_W("マクロ \"%1\" は登録されていません");
 
+#ifdef USING_TP_STUB
 #define TVPThrowInternalError \
 	TVPThrowExceptionMessage(TVPInternalError, __FILE__,  __LINE__)
 
 #define TJS_NATIVE_CLASSID_NAME ClassID_KAGParser
 static tjs_int32 TJS_NATIVE_CLASSID_NAME = -1;
+#endif
 //---------------------------------------------------------------------------
 // tTVPScenarioCacheItem : Scenario Cache Item
 //---------------------------------------------------------------------------
@@ -2267,15 +2287,24 @@ iTJSDispatch2 *tTJSNI_KAGParser::GetMacroTopNoAddRef() const
 
 
 
+#ifdef USING_TP_STUB
 static iTJSNativeInstance * TJS_INTF_METHOD Create_NI_KAGParser() {
 	return new tTJSNI_KAGParser();
 }
+#endif
 
 //---------------------------------------------------------------------------
 // tTJSNC_KAGParser : KAGParser TJS native class
 //---------------------------------------------------------------------------
+#ifndef USING_TP_STUB
+tjs_uint32 tTJSNC_KAGParser::ClassID = (tjs_uint32)-1;
+tTJSNC_KAGParser::tTJSNC_KAGParser() :
+	tTJSNativeClass(TJS_W("KAGParser"))
+{
+#else
 iTJSDispatch2 * TVPCreateNativeClass_KAGParser() {
 	tTJSNativeClassForPlugin * classobj = TJSCreateNativeClassForPlugin(TJS_W("KAGParser"), Create_NI_KAGParser);
+#endif
 	// register native methods/properties
 
 	TJS_BEGIN_NATIVE_MEMBERS(KAGParser)
@@ -2347,7 +2376,12 @@ TJS_BEGIN_NATIVE_METHOD_DECL(/*func. name*/assign)
 	if(clo.Object)
 	{
 		if(TJS_FAILED(clo.Object->NativeInstanceSupport(TJS_NIS_GETINSTANCE,
-			ClassID_KAGParser, (iTJSNativeInstance**)&src)))
+#ifdef USING_TP_STUB
+			ClassID_KAGParser, 
+#else
+			tTJSNC_KAGParser::ClassID,
+#endif
+			(iTJSNativeInstance**)&src)))
 			TVPThrowExceptionMessage(TVPKAGSpecifyKAGParser);
 	}
 	else
@@ -2643,11 +2677,39 @@ TJS_END_NATIVE_PROP_DECL(curLabel)
 
 //----------------------------------------------------------------------
 	TJS_END_NATIVE_MEMBERS
-	
+
+#ifdef USING_TP_STUB
 	return classobj;
 }
 #undef TJS_NATIVE_CLASSID_NAME
+#else
+}
+//---------------------------------------------------------------------------
+iTJSNativeInstance *tTJSNC_KAGParser::CreateNativeInstance()
+{
+	return new tTJSNI_KAGParser();
+}
+#endif
 //---------------------------------------------------------------------------
 
 
+#define REGISTER_OBJECT(classname, instance) \
+	dsp = (instance); \
+	val = tTJSVariant(dsp/*, dsp*/); \
+	dsp->Release(); \
+	global->PropSet(TJS_MEMBERENSURE|TJS_IGNOREPROP, TJS_W(#classname), NULL, \
+		&val, global);
+
+static void init_KAGParser()
+{
+	tTJSVariant val;
+    iTJSDispatch2 *dsp;
+    iTJSDispatch2 * global = TVPGetScriptDispatch();
+
+    if (global) {
+        REGISTER_OBJECT(KAGParser, new tTJSNC_KAGParser());
+    }
+}
+
+NCB_PRE_REGIST_CALLBACK(init_KAGParser);
 
