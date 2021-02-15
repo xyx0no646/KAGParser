@@ -9,24 +9,7 @@
 // KAG Parser Utility Class
 //---------------------------------------------------------------------------
 
-#include "ncbind/ncbind.hpp"
-
-#ifndef USING_TP_STUB
-#include "tjsCommHead.h"
-#endif
-
 #include "KAGParser.h"
-#ifndef USING_TP_STUB
-#include "StorageIntf.h"
-#include "tjsDictionary.h"
-#include "MsgIntf.h"
-#include "DebugIntf.h"
-#include "ScriptMgnIntf.h"
-#include "tjsHashSearch.h"
-#include "TextStream.h"
-#include "tjsGlobalStringMap.h"
-#include "EventIntf.h"
-#endif
 
 
 //---------------------------------------------------------------------------
@@ -2692,24 +2675,10 @@ iTJSNativeInstance *tTJSNC_KAGParser::CreateNativeInstance()
 #endif
 //---------------------------------------------------------------------------
 
-
-#define REGISTER_OBJECT(classname, instance) \
-	dsp = (instance); \
-	val = tTJSVariant(dsp/*, dsp*/); \
-	dsp->Release(); \
-	global->PropSet(TJS_MEMBERENSURE|TJS_IGNOREPROP, TJS_W(#classname), NULL, \
-		&val, global);
-
-static void init_KAGParser()
+static iTJSDispatch2 * TVPCreateNativeClass_KAGParser(iTJSDispatch2* global)
 {
-	tTJSVariant val;
-    iTJSDispatch2 *dsp;
-    iTJSDispatch2 * global = TVPGetScriptDispatch();
-
-    if (global) {
-        REGISTER_OBJECT(KAGParser, new tTJSNC_KAGParser());
-    }
+	iTJSDispatch2 *cls = new tTJSNC_KAGParser();
+	return cls;
 }
 
-NCB_PRE_REGIST_CALLBACK(init_KAGParser);
-
+static tTVPAtInstallClass TVPInstallClassKAGParser(TJS_W("KAGParser"), TVPCreateNativeClass_KAGParser, TJS_W(""));

@@ -19,7 +19,7 @@
 #endif
 #include "tp_stub.h"
 #else
-#include "tjsNative.h"
+#include "tp_stub.h"
 #endif
 #include "tjsHashSearch.h"
 #include <vector>
