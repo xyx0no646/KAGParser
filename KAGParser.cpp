@@ -28,7 +28,7 @@
 
 const tjs_char* TVPKAGNoLine = TJS_W("読み込もうとしたシナリオファイル %1 は空です");
 const tjs_char* TVPKAGCannotOmmitFirstLabelName = TJS_W("シナリオファイルの最初のラベル名は省略できません");
-#if 0
+#ifdef USING_TP_STUB
 const tjs_char* TVPInternalError = TJS_W("内部エラーが発生しました: at %1 line %2");
 #endif
 const tjs_char* TVPKAGMalformedSaveData = TJS_W("栞データが異常です。データが破損している可能性があります");
@@ -2675,6 +2675,7 @@ iTJSNativeInstance *tTJSNC_KAGParser::CreateNativeInstance()
 #endif
 //---------------------------------------------------------------------------
 
+#ifndef USING_TP_STUB
 static iTJSDispatch2 * TVPCreateNativeClass_KAGParser(iTJSDispatch2* global)
 {
 	iTJSDispatch2 *cls = new tTJSNC_KAGParser();
@@ -2682,3 +2683,4 @@ static iTJSDispatch2 * TVPCreateNativeClass_KAGParser(iTJSDispatch2* global)
 }
 
 static tTVPAtInstallClass TVPInstallClassKAGParser(TJS_W("KAGParser"), TVPCreateNativeClass_KAGParser, TJS_W(""));
+#endif

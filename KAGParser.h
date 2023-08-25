@@ -13,6 +13,10 @@
 #define KAGParserH
 //---------------------------------------------------------------------------
 
+#ifndef TVP_COMPILING_KRKRSDL2
+#define USING_TP_STUB
+#endif
+
 #ifdef USING_TP_STUB
 #ifdef _WIN32
 #include <windows.h>

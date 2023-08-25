@@ -1,11 +1,16 @@
 
 
+#ifndef TVP_COMPILING_KRKRSDL2
 #ifdef _WIN32
 #include <windows.h>
 #endif
 #include "tp_stub.h"
 
+#ifdef _WIN32
 #define EXPORT(hr) extern "C" __declspec(dllexport) hr __stdcall
+#else
+#define EXPORT(hr) extern "C" __attribute__((visibility ("default"))) hr
+#endif
 
 #include "KAGParser.h"
 
@@ -100,3 +105,4 @@ EXPORT(HRESULT) V2Unlink()
 	return TJS_S_OK;
 }
 //---------------------------------------------------------------------------
+#endif
