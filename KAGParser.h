@@ -27,6 +27,7 @@
 #endif
 #include "tjsHashSearch.h"
 #include <vector>
+#include <cstring>
 using namespace TJS;
 /*[*/
 //---------------------------------------------------------------------------
