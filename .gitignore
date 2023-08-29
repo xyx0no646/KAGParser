@@ -8,3 +8,5 @@
 *.suo
 *.user
 .vs/
+build/
+build-*/
