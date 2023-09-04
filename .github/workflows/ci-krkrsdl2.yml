@@ -199,7 +199,7 @@
           "uses" : "nttld/setup-ndk@v1",
           "id" : "setup_ndk",
           "with" : {
-            "ndk_version" : "r21e"
+            "ndk-version" : "r21e"
           }
         },
         {
